@@ -91,7 +91,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
         </span>
 
         {isAI && message.suggestions && message.suggestions.length > 0 && (
-          <div className="flex flex-wrap gap-2 p-2 mt-2 max-w-full">
+          <div className="flex space-x-2 overflow-x-auto p-2 mt-2 max-w-full">
             {message.suggestions.map((suggestion, index) => (
               <SuggestionChip key={index} suggestion={suggestion} onClick={onSuggestionClick} />
             ))}

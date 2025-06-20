@@ -67,7 +67,7 @@ export async function submitUserMessage(question: string): Promise<ChatResponse>
           try {
             const followUpInput: GenerateFollowUpQuestionsInput = { question, answer };
             const followUpOutput = await generateFollowUpQuestions(followUpInput);
-            suggestions = followUpOutput.followUpQuestions.slice(0, 3);
+            suggestions = followUpOutput.followUpQuestions.slice(0, 5); // Changed from 3 to 5
           } catch (genkitError) {
             console.error("Error generating follow-up questions:", genkitError);
             // This is non-fatal for suggestions; we still have the main answer.
@@ -98,4 +98,3 @@ export async function submitUserMessage(question: string): Promise<ChatResponse>
   // Ensure 'error' is explicitly part of the return, even if undefined.
   return { answer, suggestions, error };
 }
-
