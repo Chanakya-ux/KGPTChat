@@ -23,7 +23,11 @@ export default function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         {/* Meta viewport ensures proper scaling on mobile devices */}
+
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         {/* Removed direct Google Fonts links, relying on next/font */}
       </head>
       <body className={`${inter.variable} font-sans antialiased h-full`}>
