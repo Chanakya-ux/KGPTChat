@@ -55,7 +55,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
       <div className={cn("flex flex-col gap-1 w-full", isUser ? "items-end" : "items-start")}>
         <div
           className={cn(
-            "relative px-4 py-2.5 shadow-md break-words",
+            "relative px-4 py-2.5 shadow-md break-words min-h-0", // Added min-h-0
             "rounded-xl",
             isUser 
               ? "bg-user-bubble text-user-bubble-foreground rounded-br-none max-w-[80%] sm:max-w-[75%]" 
@@ -92,7 +92,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
         </span>
 
         {isAI && message.suggestions && message.suggestions.length > 0 && (
-          <div className="flex overflow-x-auto space-x-2 p-2 max-w-full">
+           <div className="flex overflow-x-auto space-x-2 p-2 max-w-full">
             {message.suggestions.map((suggestion, index) => (
               <SuggestionChip key={index} suggestion={suggestion} onClick={onSuggestionClick} />
             ))}
