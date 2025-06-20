@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react';
@@ -10,7 +11,6 @@ import { SendHorizontal, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 
-// Changed to use the internal Next.js API route for proxying
 const KGPT_API_URL = '/api/kgpt';
 
 export function KGPTChat() {
@@ -27,9 +27,7 @@ export function KGPTChat() {
   useEffect(scrollToBottom, [messages]);
 
   useEffect(() => {
-    // Focus input on load
     inputRef.current?.focus();
-    // Add an initial welcome message from KGPT
     setMessages([
       {
         id: crypto.randomUUID(),
@@ -67,15 +65,14 @@ export function KGPTChat() {
       if (!response.ok) {
         let errorData;
         try {
-          errorData = await response.json(); // Our API route returns { error: "message" }
+          errorData = await response.json();
         } catch (parseError) {
           // If response is not JSON, use generic error
         }
-        // Use errorData.error if available (from our proxy), otherwise default message
         throw new Error(errorData?.error || `API request failed with status ${response.status}`);
       }
 
-      const data = await response.json(); // Our API route forwards the { answer: "..." } structure on success
+      const data = await response.json();
       const aiMessage: Message = {
         id: crypto.randomUUID(),
         sender: 'kgpt',
@@ -110,47 +107,60 @@ export function KGPTChat() {
 
       <ScrollArea className="flex-grow bg-background/30">
         <div className="p-4 space-y-6">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn(
-                "flex items-end gap-2 animate-in fade-in-0 zoom-in-95 duration-300",
-                msg.sender === 'user' ? 'justify-end' : 'justify-start'
-              )}
-            >
-              {msg.sender === 'kgpt' && (
-                <Avatar className="h-8 w-8 self-start shadow-sm">
-                  <AvatarFallback className="bg-muted text-muted-foreground text-xs">AI</AvatarFallback>
-                </Avatar>
-              )}
-              <div className="flex flex-col max-w-[75%] sm:max-w-[70%]">
-                <div
-                  className={cn(
-                    'px-4 py-2.5 text-sm shadow-md break-words',
-                    msg.sender === 'user'
-                      ? 'bg-primary text-primary-foreground rounded-t-xl rounded-l-xl'
-                      : 'bg-card text-foreground rounded-t-xl rounded-r-xl border border-border/50',
-                    msg.text.startsWith('Error') || (msg.sender === 'kgpt' && !msg.text.includes("Hello! I'm KGPT.")) && (messages[messages.indexOf(msg)-1]?.sender === 'user' && !msg.text.startsWith("Sorry, I couldn't get a valid response.") && !msg.text.startsWith("External API error"))  ? 'bg-destructive text-destructive-foreground' : ''
+          {messages.map((msg) => {
+            const isErrorKgptMessage = msg.sender === 'kgpt' && (
+              msg.text.startsWith('Error:') ||
+              msg.text.includes('API request failed with status') ||
+              msg.text === "Sorry, I couldn't get a valid response." ||
+              msg.text.startsWith("External API error") ||
+              msg.text === "External API returned a successful but non-JSON or malformed JSON response." ||
+              msg.text === "Internal Server Error while proxying to KGPT API."
+            );
+
+            return (
+              <div
+                key={msg.id}
+                className={cn(
+                  "flex items-end gap-2 animate-in fade-in-0 zoom-in-95 duration-300",
+                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                )}
+              >
+                {msg.sender === 'kgpt' && (
+                  <Avatar className="h-8 w-8 self-start shadow-sm">
+                    <AvatarFallback className="bg-muted text-muted-foreground text-xs">AI</AvatarFallback>
+                  </Avatar>
+                )}
+                <div className="flex flex-col max-w-[75%] sm:max-w-[70%]">
+                  <div
+                    className={cn(
+                      'px-4 py-2.5 text-sm shadow-md break-words',
+                      msg.sender === 'user'
+                        ? 'bg-primary text-primary-foreground rounded-t-xl rounded-l-xl'
+                        : 'bg-card text-foreground rounded-t-xl rounded-r-xl border border-border/50',
+                      isErrorKgptMessage
+                        ? 'bg-destructive text-destructive-foreground'
+                        : ''
+                    )}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                  {msg.timestamp && (
+                     <span className={cn(
+                       "text-xs text-muted-foreground mt-1 px-1",
+                       msg.sender === 'user' ? 'text-right' : 'text-left'
+                     )}>
+                       {msg.timestamp}
+                     </span>
                   )}
-                >
-                  <p className="whitespace-pre-wrap">{msg.text}</p>
                 </div>
-                {msg.timestamp && (
-                   <span className={cn(
-                     "text-xs text-muted-foreground mt-1 px-1",
-                     msg.sender === 'user' ? 'text-right' : 'text-left'
-                   )}>
-                     {msg.timestamp}
-                   </span>
+                 {msg.sender === 'user' && (
+                  <Avatar className="h-8 w-8 self-start shadow-sm">
+                    <AvatarFallback className="bg-accent text-accent-foreground text-xs">YOU</AvatarFallback>
+                  </Avatar>
                 )}
               </div>
-               {msg.sender === 'user' && (
-                <Avatar className="h-8 w-8 self-start shadow-sm">
-                  <AvatarFallback className="bg-accent text-accent-foreground text-xs">YOU</AvatarFallback>
-                </Avatar>
-              )}
-            </div>
-          ))}
+            );
+          })}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
@@ -189,3 +199,4 @@ export function KGPTChat() {
     </Card>
   );
 }
+
