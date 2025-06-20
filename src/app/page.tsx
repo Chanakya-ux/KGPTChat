@@ -1,5 +1,5 @@
 
-import { KGPTChat } from '@/components/kgpt-chat'; // Updated import path
+import { KGPTChat } from '@/components/kgpt-chat/index'; // Explicitly point to the index file in the directory
 
 export default function Home() {
   return (
