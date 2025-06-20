@@ -17,18 +17,21 @@ export function KGPTChat() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Initial greeting message
-    setMessages([
-      {
-        id: crypto.randomUUID(),
-        sender: 'kgpt',
-        text: "Hello! I'm KGPT. How can I assist you today?",
-        timestamp: Date.now(),
-        avatar: 'KGPT', // Placeholder for actual icon logic in MessageItem
-        suggestions: ["What is KGPT?", "Tell me a fun fact", "How does AI work?"]
-      },
-    ]);
-  }, []);
+    // Set initial greeting message only if messages array is currently empty.
+    // This prevents overwriting a user's message if they interact very quickly.
+    if (messages.length === 0) {
+      setMessages([
+        {
+          id: 'initial-greeting-kgpt', // Static ID for the initial message
+          sender: 'kgpt',
+          text: "Hello! I'm KGPT. How can I assist you today?",
+          timestamp: Date.now(), // Fine in useEffect for client components
+          avatar: 'KGPT',
+          suggestions: ["When is Spring Fest?", "When is Summer Break?", "When are Summer Quarter classes?"]
+        },
+      ]);
+    }
+  }, []); // Empty dependency array ensures this runs once after mount.
 
   const handleSendMessage = useCallback(async (text: string) => {
     const userMessage: Message = {
@@ -36,7 +39,7 @@ export function KGPTChat() {
       sender: 'user',
       text,
       timestamp: Date.now(),
-      avatar: 'YOU', // Placeholder for actual icon logic
+      avatar: 'YOU', 
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
@@ -46,22 +49,38 @@ export function KGPTChat() {
       const result = await submitUserMessage(text);
 
       if (result.error) {
-        throw new Error(result.error);
+        // If submitUserMessage returns an error in its structure, treat it as a message from KGPT
+        const apiErrorAsMessage: Message = {
+          id: crypto.randomUUID(),
+          sender: 'kgpt',
+          text: result.error,
+          timestamp: Date.now(),
+          avatar: 'KGPT',
+          isError: true,
+        };
+        setMessages((prevMessages) => [...prevMessages, apiErrorAsMessage]);
+        toast({
+          title: "API Error",
+          description: result.error,
+          variant: "destructive",
+        });
+        setConnectionStatus('offline'); // Or based on the nature of the API error
+      } else {
+        const aiMessage: Message = {
+          id: crypto.randomUUID(),
+          sender: 'kgpt',
+          text: result.answer,
+          timestamp: Date.now(),
+          avatar: 'KGPT',
+          suggestions: result.suggestions,
+          isError: false,
+        };
+        setMessages((prevMessages) => [...prevMessages, aiMessage]);
+        setConnectionStatus('online');
       }
-
-      const aiMessage: Message = {
-        id: crypto.randomUUID(),
-        sender: 'kgpt',
-        text: result.answer,
-        timestamp: Date.now(),
-        avatar: 'KGPT',
-        suggestions: result.suggestions,
-        isError: false,
-      };
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
-      setConnectionStatus('online');
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      // This catches errors from the submitUserMessage action itself (e.g., network, unhandled exceptions)
+      console.error("Error sending message via action:", error);
       const errorMessageText = error.message || 'Failed to get a response. Please try again.';
       const errorMessage: Message = {
         id: crypto.randomUUID(),
@@ -81,7 +100,7 @@ export function KGPTChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast]); // `messages` is not needed as a dep due to functional updates
 
   const handleSuggestionClick = (suggestion: string) => {
     handleSendMessage(suggestion);
