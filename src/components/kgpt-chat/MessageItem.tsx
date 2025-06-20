@@ -55,9 +55,11 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
       <div className={cn("flex flex-col gap-1 w-full", isUser ? "items-end" : "items-start")}>
         <div
           className={cn(
-            "relative px-4 py-2.5 shadow-md break-words max-w-[80%] sm:max-w-[75%]",
+            "relative px-4 py-2.5 shadow-md break-words", // Removed general max-w here
             "rounded-xl",
-            isUser ? "bg-user-bubble text-user-bubble-foreground rounded-br-none" : "bg-ai-bubble text-ai-bubble-foreground rounded-bl-none",
+            isUser 
+              ? "bg-user-bubble text-user-bubble-foreground rounded-br-none max-w-[80%] sm:max-w-[75%]" 
+              : "bg-ai-bubble text-ai-bubble-foreground rounded-bl-none max-w-[70%] sm:max-w-[60%]", // AI bubble narrower
             message.isError && "bg-destructive text-destructive-foreground"
           )}
         >
@@ -91,7 +93,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
         </span>
 
         {isAI && message.suggestions && message.suggestions.length > 0 && (
-          <div className="flex space-x-2 overflow-x-auto p-2 mt-2 max-w-full">
+          <div className="flex flex-wrap gap-2 p-2 mt-2 max-w-full">
             {message.suggestions.map((suggestion, index) => (
               <SuggestionChip key={index} suggestion={suggestion} onClick={onSuggestionClick} />
             ))}
