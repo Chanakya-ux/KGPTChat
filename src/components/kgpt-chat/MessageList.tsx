@@ -48,7 +48,7 @@ export function MessageList({ messages, isLoading, onSuggestionClick }: MessageL
   };
 
   return (
-    <ScrollArea className="flex-grow p-4 sm:p-6" ref={scrollAreaRef} viewportRef={viewportRef}>
+    <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6" ref={scrollAreaRef} viewportRef={viewportRef}>
       <div className="space-y-6">
         {renderMessagesWithDateSeparators()}
         {isLoading && <TypingIndicator />}
