@@ -33,7 +33,7 @@ export function MessageList({ messages, isLoading, onSuggestionClick }: MessageL
       if (!lastDate || !isSameDay(messageDate, lastDate)) {
         messageElements.push(
           <div key={`date-${msg.id}`} className="flex justify-center my-4">
-            <span className="text-xs text-date-separator-foreground bg-date-separator px-3 py-1 rounded-full shadow-sm">
+            <span className="text-xs text-date-separator-foreground bg-date-separator-background px-3 py-1 rounded-full shadow-sm">
               {format(messageDate, "MMMM d, yyyy")}
             </span>
           </div>
@@ -48,11 +48,12 @@ export function MessageList({ messages, isLoading, onSuggestionClick }: MessageL
   };
 
   return (
-    <ScrollArea className="flex-1 min-h-0 p-4 sm:p-6" ref={scrollAreaRef} viewportRef={viewportRef}>
-      <div className="space-y-6">
+    <ScrollArea className="flex-1 min-h-0" ref={scrollAreaRef} viewportRef={viewportRef}>
+      <div className="space-y-6 p-4 sm:p-6">
         {renderMessagesWithDateSeparators()}
         {isLoading && <TypingIndicator />}
       </div>
     </ScrollArea>
   );
 }
+
