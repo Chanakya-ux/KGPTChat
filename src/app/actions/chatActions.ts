@@ -67,7 +67,7 @@ export async function submitUserMessage(question: string): Promise<ChatResponse>
           try {
             const followUpInput: GenerateFollowUpQuestionsInput = { question, answer };
             const followUpOutput = await generateFollowUpQuestions(followUpInput);
-            suggestions = followUpOutput.followUpQuestions.slice(0, 5); // Changed from 3 to 5
+            suggestions = followUpOutput.followUpQuestions.slice(0, 2); // Changed from 5 to 2
           } catch (genkitError) {
             console.error("Error generating follow-up questions:", genkitError);
             // This is non-fatal for suggestions; we still have the main answer.

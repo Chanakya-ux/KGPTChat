@@ -1,3 +1,4 @@
+
 // src/ai/flows/generate-follow-up-questions.ts
 'use server';
 /**
@@ -38,7 +39,7 @@ const generateFollowUpQuestionsPrompt = ai.definePrompt({
   output: {
     schema: GenerateFollowUpQuestionsOutputSchema,
   },
-  prompt: `Given the following question and answer, suggest five follow-up questions that the user might ask to explore the topic more deeply.\n\nQuestion: {{{question}}}\nAnswer: {{{answer}}}\n\nFollow-up Questions:`,
+  prompt: `Given the following question and answer, suggest two follow-up questions that the user might ask to explore the topic more deeply.\n\nQuestion: {{{question}}}\nAnswer: {{{answer}}}\n\nFollow-up Questions:`,
 });
 
 const generateFollowUpQuestionsFlow = ai.defineFlow(
@@ -52,3 +53,4 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     return output!;
   }
 );
+
