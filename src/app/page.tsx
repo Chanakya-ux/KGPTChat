@@ -1,9 +1,11 @@
-import { KGPTChat } from '@/components/kgpt-chat';
+
+import { KGPTChat } from '@/components/kgpt-chat'; // Updated import path
 
 export default function Home() {
   return (
-    <main className="flex justify-center items-center h-screen bg-background p-2 sm:p-4">
-      <div className="w-full max-w-2xl h-[95vh] sm:h-[90vh] max-h-[800px]">
+    // Updated styling for overall page to use theme variables
+    <main className="flex justify-center items-center min-h-screen bg-gradient-to-br from-background to-secondary p-2 sm:p-4">
+      <div className="w-full max-w-3xl h-[calc(100vh-2rem)] sm:h-[calc(100vh-4rem)] max-h-[900px]">
         <KGPTChat />
       </div>
     </main>

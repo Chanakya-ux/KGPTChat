@@ -1,6 +1,12 @@
-import type {Metadata} from 'next';
+
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google'; // Import Inter
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProviderWrapper } from '@/components/theme-provider-wrapper'; // Import new wrapper
+
+// Configure Inter font
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: 'KGPT Chat',
@@ -13,15 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        {/* Removed direct Google Fonts links, relying on next/font */}
       </head>
-      <body className="font-body antialiased">
-        {children}
-        <Toaster />
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <ThemeProviderWrapper> {/* Wrap children with ThemeProviderWrapper */}
+          {children}
+          <Toaster />
+        </ThemeProviderWrapper>
       </body>
     </html>
   );
