@@ -63,7 +63,10 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
   };
 
   return (
-    <div className="sticky bottom-0 left-0 right-0 p-3 sm:p-4 border-t bg-card/80 backdrop-blur-md">
+    <div
+      className="sticky bottom-0 left-0 right-0 p-3 sm:p-4 border-t bg-card/80 backdrop-blur-md"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 0.75rem)' }}
+    >
       <div className="flex items-end gap-2 relative">
         <Textarea
           ref={textareaRef}
