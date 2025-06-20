@@ -10,7 +10,8 @@ import { SendHorizontal, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 
-const KGPT_API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://kgpt-1.onrender.com/query';
+// Changed to use the internal Next.js API route for proxying
+const KGPT_API_URL = '/api/kgpt';
 
 export function KGPTChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -64,17 +65,17 @@ export function KGPTChat() {
       });
 
       if (!response.ok) {
-        // Attempt to parse error from API if available
         let errorData;
         try {
-          errorData = await response.json();
+          errorData = await response.json(); // Our API route returns { error: "message" }
         } catch (parseError) {
           // If response is not JSON, use generic error
         }
-        throw new Error(errorData?.detail || `API request failed with status ${response.status}`);
+        // Use errorData.error if available (from our proxy), otherwise default message
+        throw new Error(errorData?.error || `API request failed with status ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = await response.json(); // Our API route forwards the { answer: "..." } structure on success
       const aiMessage: Message = {
         id: crypto.randomUUID(),
         sender: 'kgpt',
@@ -94,7 +95,6 @@ export function KGPTChat() {
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
     } finally {
       setIsLoading(false);
-      // Re-focus input after sending/receiving message
       setTimeout(() => inputRef.current?.focus(), 0);
     }
   };
@@ -130,7 +130,7 @@ export function KGPTChat() {
                     msg.sender === 'user'
                       ? 'bg-primary text-primary-foreground rounded-t-xl rounded-l-xl'
                       : 'bg-card text-foreground rounded-t-xl rounded-r-xl border border-border/50',
-                    msg.text.startsWith('Error') ? 'bg-destructive text-destructive-foreground' : ''
+                    msg.text.startsWith('Error') || (msg.sender === 'kgpt' && !msg.text.includes("Hello! I'm KGPT.")) && (messages[messages.indexOf(msg)-1]?.sender === 'user' && !msg.text.startsWith("Sorry, I couldn't get a valid response.") && !msg.text.startsWith("External API error"))  ? 'bg-destructive text-destructive-foreground' : ''
                   )}
                 >
                   <p className="whitespace-pre-wrap">{msg.text}</p>
