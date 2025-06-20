@@ -33,7 +33,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
   const getAvatarFallback = () => {
     if (isAI) return <KGPTIcon className="h-5 w-5" />;
     if (isUser) return <UserIcon className="h-5 w-5" />;
-    return <UserIcon className="h-5 w-5" />;
+    return <UserIcon className="h-5 w-5" />; // Default fallback
   };
 
   return (
@@ -47,7 +47,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
     >
       {isAI && (
         <Avatar className="h-8 w-8 self-start shadow-sm">
-          {message.avatar && !isUser ? <AvatarImage src={message.avatar} alt="AI Avatar" /> : null}
+          {/* AI might have image avatars in the future, for now uses fallback */}
           <AvatarFallback className="bg-ai-bubble text-ai-bubble-foreground">{getAvatarFallback()}</AvatarFallback>
         </Avatar>
       )}
@@ -59,7 +59,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
             "rounded-xl",
             isUser 
               ? "bg-user-bubble text-user-bubble-foreground rounded-br-none max-w-[80%] sm:max-w-[75%]" 
-              : "bg-ai-bubble text-ai-bubble-foreground rounded-bl-none max-w-[60%] sm:max-w-[50%]", // AI bubble narrower
+              : "bg-ai-bubble text-ai-bubble-foreground rounded-bl-none max-w-[60%] sm:max-w-[50%]", 
             message.isError && "bg-destructive text-destructive-foreground"
           )}
         >
@@ -81,7 +81,6 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCopy} title="Copy text">
                 <CopyIcon className="h-3.5 w-3.5" />
               </Button>
-              {/* Placeholder for reactions */}
               <Button variant="ghost" size="icon" className="h-6 w-6" title="React">
                 <ReactionIcon className="h-3.5 w-3.5" />
               </Button>

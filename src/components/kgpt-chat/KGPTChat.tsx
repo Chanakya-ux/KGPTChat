@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Message } from '@/types';
 import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
@@ -31,6 +31,7 @@ export function KGPTChat() {
         },
       ]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures this runs once after mount.
 
   const handleSendMessage = useCallback(async (text: string) => {
@@ -39,7 +40,7 @@ export function KGPTChat() {
       sender: 'user',
       text,
       timestamp: Date.now(),
-      avatar: 'YOU', 
+      avatar: 'YOU',
     };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setIsLoading(true);
@@ -49,7 +50,6 @@ export function KGPTChat() {
       const result = await submitUserMessage(text);
 
       if (result.error) {
-        // If submitUserMessage returns an error in its structure, treat it as a message from KGPT
         const apiErrorAsMessage: Message = {
           id: crypto.randomUUID(),
           sender: 'kgpt',
@@ -64,7 +64,7 @@ export function KGPTChat() {
           description: result.error,
           variant: "destructive",
         });
-        setConnectionStatus('offline'); // Or based on the nature of the API error
+        setConnectionStatus('offline');
       } else {
         const aiMessage: Message = {
           id: crypto.randomUUID(),
@@ -79,7 +79,6 @@ export function KGPTChat() {
         setConnectionStatus('online');
       }
     } catch (error: any) {
-      // This catches errors from the submitUserMessage action itself (e.g., network, unhandled exceptions)
       console.error("Error sending message via action:", error);
       const errorMessageText = error.message || 'Failed to get a response. Please try again.';
       const errorMessage: Message = {
@@ -100,7 +99,7 @@ export function KGPTChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]); // `messages` is not needed as a dep due to functional updates
+  }, [toast, messages]); // Added messages to dependency array as a precaution
 
   const handleSuggestionClick = (suggestion: string) => {
     handleSendMessage(suggestion);
