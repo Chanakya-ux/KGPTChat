@@ -99,7 +99,7 @@ export function KGPTChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, messages]); // Added messages to dependency array as a precaution
+  }, [toast]); // Removed `messages` from dependency array
 
   const handleSuggestionClick = (suggestion: string) => {
     handleSendMessage(suggestion);
