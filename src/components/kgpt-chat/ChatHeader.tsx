@@ -27,7 +27,10 @@ export function ChatHeader({ connectionStatus }: ChatHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b bg-card/80 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b bg-card/80 backdrop-blur-md"
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+    >
       <div className="flex items-center gap-2">
         <KGPTIcon className="h-7 w-7 text-primary" />
         <h1 className="text-xl font-headline font-semibold text-foreground">KGPT Chat</h1>

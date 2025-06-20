@@ -12,7 +12,11 @@ export function ViewportHeightWrapper({ children }: { children: React.ReactNode 
     };
     setHeight();
     window.addEventListener('resize', setHeight);
-    return () => window.removeEventListener('resize', setHeight);
+    window.addEventListener('orientationchange', setHeight);
+    return () => {
+      window.removeEventListener('resize', setHeight);
+      window.removeEventListener('orientationchange', setHeight);
+    };
   }, []);
 
   return <>{children}</>;
