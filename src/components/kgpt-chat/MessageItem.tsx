@@ -32,8 +32,9 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
 
   const getAvatarFallback = () => {
     if (isAI) return <KGPTIcon className="h-5 w-5" />;
-    // Simple initials logic, can be expanded
-    return message.avatar || <UserIcon className="h-5 w-5" />;
+    if (isUser) return <UserIcon className="h-5 w-5" />; // Always use UserIcon for user
+    // Fallback for any other sender type if needed, or default to UserIcon
+    return <UserIcon className="h-5 w-5" />;
   };
 
   return (
@@ -47,7 +48,7 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
     >
       {isAI && (
         <Avatar className="h-8 w-8 self-start shadow-sm">
-          {message.avatar ? <AvatarImage src={message.avatar} alt="AI Avatar" /> : null}
+          {message.avatar && !isUser ? <AvatarImage src={message.avatar} alt="AI Avatar" /> : null}
           <AvatarFallback className="bg-ai-bubble text-ai-bubble-foreground">{getAvatarFallback()}</AvatarFallback>
         </Avatar>
       )}
@@ -101,7 +102,8 @@ export function MessageItem({ message, onSuggestionClick }: MessageItemProps) {
 
       {isUser && (
         <Avatar className="h-8 w-8 self-start shadow-sm">
-           {message.avatar ? <AvatarImage src={message.avatar} alt="User Avatar" /> : null}
+           {/* User avatar image can still be supported if message.avatar is a URL */}
+           {message.avatar && typeof message.avatar === 'string' && !message.avatar.match(/^[A-Z]+$/) ? <AvatarImage src={message.avatar} alt="User Avatar" /> : null}
           <AvatarFallback className="bg-user-bubble text-user-bubble-foreground">{getAvatarFallback()}</AvatarFallback>
         </Avatar>
       )}
